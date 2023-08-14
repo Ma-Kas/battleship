@@ -9,6 +9,9 @@ module.exports = {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
   },
+  devServer: {
+    static: './dist',
+  },
 
   module: {
     rules: [
@@ -35,7 +38,6 @@ module.exports = {
         test: /\.(woff|woff2|eot|ttf|otf)$/i,
         type: 'asset/resource',
       },
-
     ],
   },
 

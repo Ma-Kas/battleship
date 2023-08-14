@@ -6,6 +6,7 @@
   "scripts": {
     "test": "jest",
     "test-watch": "jest --watch",
+    "serve": "webpack serve --open",
     "build": "webpack",
     "watch": "webpack --watch",
     "push-gh-pages": "git subtree push --prefix dist origin gh-pages"
@@ -16,6 +17,7 @@
   "devDependencies": {
     "@babel/core": "^7.22.10",
     "@babel/preset-env": "^7.22.10",
+    "@types/jest": "^29.5.3",
     "babel-jest": "^29.6.2",
     "css-loader": "^6.8.1",
     "eslint": "^8.47.0",
@@ -30,6 +32,7 @@
     "prettier": "3.0.1",
     "style-loader": "^3.3.3",
     "webpack": "^5.88.2",
-    "webpack-cli": "^5.1.4"
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "4.15.1"
   }
 }
