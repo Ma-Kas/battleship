@@ -1,0 +1,134 @@
+@font-face {
+  font-family: 'Ark Pixel';
+  src: url('../fonts/ark-pixel-16px-proportional-latin.otf');
+  font-weight: normal;
+  font-style: normal;
+}
+
+:root {
+  --clr-black: black;
+  --clr-white: white;
+  --pixel-font: 'Ark Pixel', sans-serif;
+  --fnt-regular-size: 16px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+  /* border: 1px solid red; */
+  padding: 0;
+}
+
+body {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  height: 4rem;
+  border-bottom: 1px solid var(--clr-white);
+}
+
+#main {
+  flex: 1;
+  height: 100%;
+  margin: 2rem 4rem;
+}
+
+.vertical-separator {
+  content: '';
+  height: 100%;
+  width: 1px;
+}
+
+.playing-field {
+  height: 100%;
+  width: 100%;
+}
+
+.board {
+  align-self: center;
+  height: 100%;
+  aspect-ratio: 1;
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+}
+
+.cell {
+  border: 1px solid white;
+}
+
+.cell.miss {
+  /* display miss symbol */
+}
+
+.cell.hit {
+  /* display hit symbol */
+}
+
+.ship {
+  background-color: grey;
+}
+
+.cell:not(.hit):not(.miss):hover {
+  cursor: pointer;
+}
+
+/* Utility Classes */
+.clr-base {
+  background-color: var(--clr-black);
+}
+
+.clr-accent {
+  background-color: var(--clr-white);
+}
+
+.fnt-clr-accent {
+  color: var(--clr-white);
+}
+
+.fnt-regular {
+  font-family: var(--pixel-font);
+  font-size: var(--fnt-regular-size);
+}
+
+.fnt-centered {
+  text-align: center;
+}
+
+.fnt-heading {
+  font-family: var(--pixel-font);
+  font-size: calc(var(--fnt-regular-size) * 2);
+}
+
+.frm-accent {
+  border: 1px solid var(--clr-white);
+}
+
+.active-turn {
+  background-color: var(--clr-white);
+  color: var(--clr-black);
+}
+
+.flex-row {
+  display: flex;
+  gap: 4rem;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.flex-centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

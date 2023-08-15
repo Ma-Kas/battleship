@@ -3,7 +3,7 @@ import Ship from '../ship';
 describe('Ship', () => {
   let ship;
   beforeEach(() => {
-    ship = new Ship('Submarine', 3);
+    ship = new Ship('Submarine', [1, 2, 3]);
   });
 
   test('should create a new ship of length 3', () => {
@@ -11,7 +11,7 @@ describe('Ship', () => {
       name: 'Submarine',
       length: 3,
       hits: [],
-      occupiedCells: [],
+      occupiedCells: [1, 2, 3],
     });
   });
 

@@ -14,8 +14,8 @@ class Gameboard {
     this.board = Array.from({ length: GRID * GRID }, (x, i) => i + 1);
   }
 
-  placeShip(shipType, length) {
-    const newShip = new Ship(shipType, length);
+  placeShip(shipType, cells) {
+    const newShip = new Ship(shipType, cells);
     this.ships.push(newShip);
   }
 

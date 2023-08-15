@@ -1,14 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Battleship</title>
-</head>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Battleship</title>
+  </head>
 
-  <body id="body">
+  <body class="clr-base fnt-clr-accent">
+    <header class="fnt-heading | flex-centered">
+      Battleship - Destroy your enemies!
+    </header>
+    <main id="main" class="flex-row">
+      <div id="player-field" class="playing-field | flex-column">
+        <div class="fleet-container | fnt-heading frm-accent">
+          <div class="fleet-name | fnt-centered">YOUR FLEET</div>
+        </div>
+        <div class="board">
 
+        </div>
+
+      </div>
+
+      <div class="vertical-separator | clr-accent"></div>
+
+      <div id="opponent-field" class="playing-field | flex-column">
+        <div class="fleet-container | fnt-heading frm-accent">
+          <div class="fleet-name | fnt-centered">ENEMY FLEET</div>
+        </div>
+        <div class="board">
+
+        </div>
+      </div>
+      
+    </main>
   </body>
 
 </html>

@@ -15,10 +15,11 @@ module.exports = {
 
   module: {
     rules: [
-      {
-        test: /\.css$/i,
-        use: ['style-loader', 'css-loader'],
-      },
+      // Doesn't play nice with webpack-dev-server:
+      // {
+      //   test: /\.css$/i,
+      //   use: ['style-loader', 'css-loader'],
+      // },
       {
         test: /\.html$/i,
         loader: 'html-loader',

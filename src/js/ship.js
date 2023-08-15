@@ -1,8 +1,8 @@
 class Ship {
-  constructor(name, length) {
+  constructor(name, occupiedCells) {
     this.name = name;
-    this.length = length;
-    this.occupiedCells = [];
+    this.length = occupiedCells.length;
+    this.occupiedCells = occupiedCells;
     this.hits = [];
   }
 
