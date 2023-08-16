@@ -1,9 +1,6 @@
 import Player from './player';
 import Gameboard from './gameboard';
-import Ship from './ship';
 import '../css/style.css';
-
-// Ships: Carrier(5), Battleship(4), Cruiser(3), Submarine(3), Destroyer(2)
 
 /// ////////////
 // MODULES
@@ -14,8 +11,6 @@ const mainGameLoop = (() => {
   // Create Opponents
   const gameboardPlayer = new Gameboard(player1);
   const gameboardOpponent = new Gameboard(opponent);
-
-  const currentTurn = player1;
 
   function prepareGame() {
     gameboardPlayer.initialize();
@@ -38,14 +33,88 @@ const mainGameLoop = (() => {
     gameboardOpponent.placeShip('Destroyer', [41, 42]);
   }
 
+  function playOpponentTurn() {
+    // Pick random valid cell to attack
+    let cellToAttack =
+      Math.floor(Math.random() * gameboardOpponent.board.length) + 1;
+
+    while (opponent.madeShots.includes(cellToAttack)) {
+      cellToAttack =
+        Math.floor(Math.random() * gameboardOpponent.board.length) + 1;
+    }
+
+    // Handle attack on chosen cell
+    if (opponent.takeShot(cellToAttack)) {
+      const targetCellDOM = DOMController.getCellFromCoord(
+        gameboardPlayer,
+        cellToAttack,
+      );
+      if (gameboardPlayer.receiveAttack(cellToAttack)) {
+        DOMController.renderShot(targetCellDOM, true);
+      } else {
+        DOMController.renderShot(targetCellDOM, false);
+      }
+    }
+
+    // Check for win
+    if (checkForWin()) {
+      DOMController.handleEndGame(checkForWin());
+    }
+  }
+
+  function playTurn(clickedCell) {
+    const targetCell = Number(clickedCell.dataset.coord);
+    // Only run logic, if clicked cell is valid
+    if (mainGameLoop.player1.takeShot(targetCell)) {
+      if (mainGameLoop.gameboardOpponent.receiveAttack(targetCell)) {
+        DOMController.renderShot(clickedCell, true);
+      } else {
+        DOMController.renderShot(clickedCell, false);
+      }
+
+      // Check for win, otherwise let opponent play turn
+      if (checkForWin()) {
+        DOMController.handleEndGame(checkForWin());
+      } else {
+        playOpponentTurn();
+      }
+    }
+  }
+
+  function checkForWin() {
+    if (gameboardPlayer.allShipsDestroyed()) return opponent;
+    if (gameboardOpponent.allShipsDestroyed()) return player1;
+    return false;
+  }
+
+  function resetGame() {
+    player1.reset();
+    opponent.reset();
+    gameboardPlayer.reset();
+    gameboardOpponent.reset();
+
+    prepareGame();
+    testPlaceShips();
+    gameboardPlayer.ships.forEach((ship) => {
+      DOMController.renderShip(gameboardPlayer, ship);
+    });
+
+    gameboardOpponent.ships.forEach((ship) => {
+      DOMController.renderShip(gameboardOpponent, ship);
+    });
+  }
+
   return {
     player1,
     opponent,
-    currentTurn,
     gameboardPlayer,
     gameboardOpponent,
     prepareGame,
     testPlaceShips,
+    playOpponentTurn,
+    playTurn,
+    checkForWin,
+    resetGame,
   };
 })();
 
@@ -55,18 +124,49 @@ const DOMController = (() => {
   const playerBoard = playerField.querySelector('.board');
   const opponentBoard = opponentField.querySelector('.board');
 
+  (function buttonEventListeners() {
+    const resetBtn = document.getElementById('reset');
+
+    resetBtn.addEventListener('click', () => {
+      const modalContainer = document.getElementById('modal-container');
+      playerBoard.innerHTML = '';
+      opponentBoard.innerHTML = '';
+      mainGameLoop.resetGame();
+      modalContainer.classList.toggle('hidden');
+    });
+  })();
+
   // Create an empty grid on correct side for passed in gameboard
   function createBoardGrid(board) {
     const parent =
       board.owner.playerName === 'player' ? playerBoard : opponentBoard;
-    console.log(parent);
 
-    board.board.forEach((cellNum) => {
-      const newCell = document.createElement('div');
-      newCell.classList.add('cell');
-      newCell.dataset.coord = cellNum;
-      parent.appendChild(newCell);
-    });
+    if (parent === playerBoard) {
+      board.board.forEach((cellNum) => {
+        const newCell = document.createElement('div');
+        newCell.classList.add('player-cell');
+        newCell.dataset.coord = cellNum;
+        parent.appendChild(newCell);
+      });
+    } else {
+      board.board.forEach((cellNum) => {
+        const newCell = document.createElement('div');
+        newCell.classList.add('opponent-cell');
+        newCell.dataset.coord = cellNum;
+        parent.appendChild(newCell);
+
+        newCell.addEventListener('click', (e) => {
+          mainGameLoop.playTurn(e.target);
+        });
+      });
+    }
+  }
+
+  // Given input of which board, and cell coordinate(1-100), return ref to cell DOM element
+  function getCellFromCoord(board, coord) {
+    const parent =
+      board.owner.playerName === 'player' ? playerBoard : opponentBoard;
+    return parent.querySelector(`[data-coord="${coord}"]`);
   }
 
   // Takes ref to which board and which ship
@@ -76,13 +176,36 @@ const DOMController = (() => {
 
     ship.occupiedCells.forEach((occupiedCell) => {
       const domCell = parent.querySelector(`[data-coord="${occupiedCell}"]`);
-      domCell.classList.add('ship');
+      if (parent === playerBoard) {
+        domCell.classList.add('ship');
+      } else {
+        domCell.classList.add('ship-hidden');
+      }
     });
+  }
+
+  function renderShot(targetCell, isHit) {
+    if (isHit) {
+      targetCell.classList.add('hit');
+    } else {
+      targetCell.classList.add('miss');
+    }
+  }
+
+  function handleEndGame(winner) {
+    const modalContainer = document.getElementById('modal-container');
+    const resultText = modalContainer.querySelector('.result');
+    resultText.textContent =
+      winner.playerName === 'opponent' ? 'You lose!' : 'You win!';
+    modalContainer.classList.toggle('hidden');
   }
 
   return {
     createBoardGrid,
+    getCellFromCoord,
     renderShip,
+    renderShot,
+    handleEndGame,
   };
 })();
 
@@ -97,7 +220,3 @@ mainGameLoop.gameboardPlayer.ships.forEach((ship) => {
 mainGameLoop.gameboardOpponent.ships.forEach((ship) => {
   DOMController.renderShip(mainGameLoop.gameboardOpponent, ship);
 });
-
-if (mainGameLoop.player1.takeShot(4)) {
-  mainGameLoop.gameboardPlayer.receiveAttack(4);
-}

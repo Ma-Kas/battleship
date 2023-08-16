@@ -60,27 +60,52 @@ header {
   grid-template-columns: repeat(10, 1fr);
 }
 
-.cell {
+.player-cell,
+.opponent-cell {
   border: 1px solid white;
 }
 
-.cell.miss {
-  /* display miss symbol */
+.player-cell.miss::before,
+.opponent-cell.miss::before {
+  position: absolute;
+  content: url('../img/miss.svg');
 }
 
-.cell.hit {
-  /* display hit symbol */
+.player-cell.hit::before,
+.opponent-cell.hit::before {
+  position: absolute;
+  content: url('../img/hit.svg');
 }
 
 .ship {
   background-color: grey;
 }
 
-.cell:not(.hit):not(.miss):hover {
+.opponent-cell:not(.hit):not(.miss):hover {
   cursor: pointer;
 }
 
+#modal-container {
+  position: fixed;
+  background-color: var(--clr-black);
+  inset: 0; /* shorthand for top, right, bottom, left */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#modal {
+  position: fixed;
+  height: 50vh;
+  width: 50vw;
+  padding: 4rem;
+}
+
 /* Utility Classes */
+#modal-container.hidden {
+  display: none;
+}
+
 .clr-base {
   background-color: var(--clr-black);
 }
@@ -107,6 +132,11 @@ header {
   font-size: calc(var(--fnt-regular-size) * 2);
 }
 
+.fnt-huge {
+  font-family: var(--pixel-font);
+  font-size: calc(var(--fnt-regular-size) * 4);
+}
+
 .frm-accent {
   border: 1px solid var(--clr-white);
 }
@@ -118,17 +148,35 @@ header {
 
 .flex-row {
   display: flex;
-  gap: 4rem;
 }
 
 .flex-column {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
 }
 
 .flex-centered {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.gap-2 {
+  gap: 2rem;
+}
+
+.gap-4 {
+  gap: 4rem;
+}
+
+button {
+  width: 12rem;
+  padding: 0.5rem 1rem;
+}
+
+button:hover {
+  cursor: pointer;
+  background-color: var(--clr-white);
+  color: var(--clr-black);
+  scale: 105%;
 }

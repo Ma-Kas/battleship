@@ -9,10 +9,10 @@
 
   <body class="clr-base fnt-clr-accent">
     <header class="fnt-heading | flex-centered">
-      Battleship - Destroy your enemies!
+      Battleship - Destroy your enemy!
     </header>
-    <main id="main" class="flex-row">
-      <div id="player-field" class="playing-field | flex-column">
+    <main id="main" class="flex-row gap-4">
+      <div id="player-field" class="playing-field | flex-column gap-2">
         <div class="fleet-container | fnt-heading frm-accent">
           <div class="fleet-name | fnt-centered">YOUR FLEET</div>
         </div>
@@ -24,7 +24,7 @@
 
       <div class="vertical-separator | clr-accent"></div>
 
-      <div id="opponent-field" class="playing-field | flex-column">
+      <div id="opponent-field" class="playing-field | flex-column gap-2">
         <div class="fleet-container | fnt-heading frm-accent">
           <div class="fleet-name | fnt-centered">ENEMY FLEET</div>
         </div>
@@ -34,6 +34,16 @@
       </div>
       
     </main>
+
+    <div id="modal-container" class="hidden">
+      <div id="modal" class="frm-accent flex-column gap-2 flex-centered">
+        <h1 class="result | fnt-huge fnt-centered fnt-clr-accent">You lost!</h1>
+        <div class="button-container | flex-row gap-2">
+          <button id="reset" class="frm-accent clr-base fnt-clr-accent fnt-regular">Play again</button>
+          <button id="exit" class="frm-accent clr-base fnt-clr-accent fnt-regular">Give up</button>
+        </div>
+      </div>
+    </div>
   </body>
 
 </html>

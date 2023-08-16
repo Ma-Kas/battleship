@@ -9,6 +9,10 @@ class Player {
     this.madeShots.push(cell);
     return true;
   }
+
+  reset() {
+    this.madeShots = [];
+  }
 }
 
 export default Player;

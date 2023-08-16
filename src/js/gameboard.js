@@ -29,15 +29,22 @@ class Gameboard {
         if (hitShip.isSunk()) {
           this.ships.splice(this.ships.indexOf(hitShip), 1);
         }
-        return;
+        return true;
       }
     }
     // If no hit, append missedShots array
     this.missedShots.push(attackedCell);
+    return false;
   }
 
   allShipsDestroyed() {
     return this.ships.length === 0;
+  }
+
+  reset() {
+    this.board = [];
+    this.ships = [];
+    this.missedShots = [];
   }
 }
 
