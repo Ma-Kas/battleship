@@ -1,13 +1,13 @@
 class Ship {
-  constructor(name, occupiedCells) {
+  constructor(name, length, occupiedCells) {
     this.name = name;
-    this.length = occupiedCells.length;
+    this.length = length;
     this.occupiedCells = occupiedCells;
     this.hits = [];
   }
 
-  occupyCells() {
-    this.occupyCells.push();
+  occupyCells(cells) {
+    this.occupiedCells = cells;
   }
 
   hit(cell) {

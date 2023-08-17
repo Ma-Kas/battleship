@@ -20,13 +20,25 @@ describe('Gameboard', () => {
     expect(newGameboard.board.length).toBe(100);
   });
 
+  test('should allow valid ship placement', () => {
+    newGameboard.initialize();
+    expect(newGameboard.isValidShipPlacement(5, [10, 20, 30, 40, 50])).toBe(
+      true,
+    );
+  });
+
+  test('should disallow valid ship placement', () => {
+    newGameboard.initialize();
+    expect(newGameboard.isValidShipPlacement(4, [1, 2, 5])).toBe(false);
+  });
+
   test('should add a battleship to ships array, when placed', () => {
     newGameboard.initialize();
-    newGameboard.placeShip('Battleship', 4);
+    newGameboard.placeShip('Battleship', 5, [10, 20, 30, 40, 50]);
     expect(newGameboard.ships).toContainEqual({
       hits: [],
-      length: 4,
-      occupiedCells: [],
+      length: 5,
+      occupiedCells: [10, 20, 30, 40, 50],
       name: 'Battleship',
     });
   });

@@ -1,5 +1,6 @@
 import Player from './player';
 import Gameboard from './gameboard';
+import { SHIP_TYPES } from './helpers';
 import '../css/style.css';
 
 /// ////////////
@@ -20,17 +21,13 @@ const mainGameLoop = (() => {
   }
 
   function testPlaceShips() {
-    gameboardPlayer.placeShip('Carrier', [10, 20, 30, 40, 50]);
-    gameboardPlayer.placeShip('Battleship', [11, 12, 13, 14]);
-    gameboardPlayer.placeShip('Cruiser', [84, 85, 86]);
-    gameboardPlayer.placeShip('Submarine', [33, 34, 35]);
-    gameboardPlayer.placeShip('Destroyer', [88, 98]);
-
-    gameboardOpponent.placeShip('Carrier', [1, 2, 3, 4, 5]);
-    gameboardOpponent.placeShip('Battleship', [11, 12, 13, 14]);
-    gameboardOpponent.placeShip('Cruiser', [21, 22, 23]);
-    gameboardOpponent.placeShip('Submarine', [63, 64, 65]);
-    gameboardOpponent.placeShip('Destroyer', [41, 42]);
+    gameboardPlayer.placeShipsRandomly();
+    // gameboardPlayer.placeShip(
+    //   SHIP_TYPES[0].type,
+    //   SHIP_TYPES[0].length,
+    //   [10, 20, 30, 40, 50],
+    // );
+    // gameboardPlayer.placeShip('Battleship', 4, [11, 12, 13, 14]);
   }
 
   function playOpponentTurn() {
