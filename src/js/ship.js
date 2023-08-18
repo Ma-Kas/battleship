@@ -6,10 +6,6 @@ class Ship {
     this.hits = [];
   }
 
-  occupyCells(cells) {
-    this.occupiedCells = cells;
-  }
-
   hit(cell) {
     if (this.hits.includes(cell)) return;
     this.hits.push(cell);

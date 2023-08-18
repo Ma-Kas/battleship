@@ -49,7 +49,7 @@ class Gameboard {
     if (!proposedCells.every((cell) => cell >= 1 && cell <= GRID * GRID))
       return false;
 
-    proposedCells.sort();
+    proposedCells.sort((a, b) => a - b);
 
     // Invalid if cells are not perfectly consecutive (+1 to each) (for horizontal)
     // AND if not below each other (+10 to each) (for vertical)

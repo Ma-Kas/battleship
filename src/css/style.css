@@ -56,31 +56,52 @@ header {
 }
 
 .player-cell,
-.opponent-cell {
+.opponent-cell,
+.placement-cell {
   border: 1px solid white;
 }
 
-.player-cell.miss::before,
-.opponent-cell.miss::before {
-  position: absolute;
-  content: url('../img/miss.svg');
+.placement-cell-highlight,
+.cell-inner {
+  height: 70%;
+  width: 70%;
 }
 
-.player-cell.hit::before,
-.opponent-cell.hit::before {
-  position: absolute;
-  content: url('../img/hit.svg');
+.placement-cell-highlight.hover {
+  cursor: pointer;
+  background-color: var(--clr-white);
+}
+
+.placement-cell-highlight.ship {
+  background-color: var(--clr-white);
 }
 
 .ship {
-  background-color: grey;
+  background-color: var(--clr-white);
 }
 
-.opponent-cell:not(.hit):not(.miss):hover {
+.player-cell .cell-inner.hit,
+.opponent-cell .cell-inner.hit {
+  background-color: var(--clr-black);
+  border: 2px solid white;
+}
+
+.player-cell .cell-inner.miss,
+.opponent-cell .cell-inner.miss {
+  height: 50%;
+  width: 50%;
+  background-color: var(--clr-black);
+  border: 2px solid white;
+  border-radius: 50%;
+}
+
+.opponent-cell:hover .cell-inner:not(.hit):not(.miss) {
   cursor: pointer;
 }
 
-#modal-container {
+#welcome-modal-container,
+#modal-container,
+#placement-modal-container {
   position: fixed;
   background-color: var(--clr-black);
   inset: 0; /* shorthand for top, right, bottom, left */
@@ -89,6 +110,7 @@ header {
   align-items: center;
 }
 
+#welcome-modal,
 #modal {
   position: fixed;
   height: 50vh;
@@ -96,8 +118,17 @@ header {
   padding: 8vmin;
 }
 
+#placement-modal {
+  position: fixed;
+  height: 90vh;
+  width: 60vw;
+  padding: 4vmin;
+}
+
 /* Utility Classes */
-#modal-container.hidden {
+#welcome-modal-container.hidden,
+#modal-container.hidden,
+#placement-modal-container.hidden {
   display: none;
 }
 
@@ -130,6 +161,11 @@ header {
 .fnt-huge {
   font-family: var(--pixel-font);
   font-size: calc(var(--fnt-regular-size) * 4);
+}
+
+.fnt-humongous {
+  font-family: var(--pixel-font);
+  font-size: calc(var(--fnt-regular-size) * 6);
 }
 
 .frm-accent {
@@ -169,8 +205,8 @@ header {
 }
 
 button {
-  width: 12rem;
-  padding: 0.5rem 1rem;
+  max-width: 32vmin;
+  padding: 1vmin 2vmin;
 }
 
 button:hover {

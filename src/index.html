@@ -35,12 +35,32 @@
       
     </main>
 
+    <div id="welcome-modal-container" class="">
+      <div id="welcome-modal" class="frm-accent flex-column gap-2 flex-centered">
+        <h1 class="welcome | fnt-huge fnt-centered fnt-clr-accent">BATTLESHIP</h1>
+        <button id="start" class="frm-accent clr-base fnt-clr-accent fnt-regular">Start Game</button>
+      </div>
+    </div>
+
     <div id="modal-container" class="hidden">
       <div id="modal" class="frm-accent flex-column gap-2 flex-centered">
         <h1 class="result | fnt-huge fnt-centered fnt-clr-accent">You lost!</h1>
         <div class="button-container | flex-row gap-2">
           <button id="reset" class="frm-accent clr-base fnt-clr-accent fnt-regular">Play again</button>
           <button id="exit" class="frm-accent clr-base fnt-clr-accent fnt-regular">Give up</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="placement-modal-container" class="hidden">
+      <div id="placement-modal" class="frm-accent flex-column gap-4 flex-centered">
+        <h1 class="placement | fnt-heading fnt-centered fnt-clr-accent">Place your fleet</h1>
+        <div class="board">
+
+        </div>
+        <div class="button-container | flex-row gap-2">
+          <button id="flip" class="frm-accent clr-base fnt-clr-accent fnt-regular" data-horiz="1">Flip Axis</button>
+          <button id="confirm" class="frm-accent clr-base fnt-clr-accent fnt-regular">Confirm</button>
         </div>
       </div>
     </div>

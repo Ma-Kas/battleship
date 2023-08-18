@@ -13,21 +13,49 @@ const mainGameLoop = (() => {
   const gameboardPlayer = new Gameboard(player1);
   const gameboardOpponent = new Gameboard(opponent);
 
+  let currentShipToPlace = SHIP_TYPES[0];
+
   function prepareGame() {
+    // Initialize Gameboards
     gameboardPlayer.initialize();
     gameboardOpponent.initialize();
+
+    // Create DOM Elements
+    DOMController.createPlacementGrid();
     DOMController.createBoardGrid(gameboardPlayer);
     DOMController.createBoardGrid(gameboardOpponent);
+
+    // Create Random Opponent Ships
+    gameboardOpponent.placeShipsRandomly();
+    mainGameLoop.gameboardOpponent.ships.forEach((ship) => {
+      DOMController.renderShip(mainGameLoop.gameboardOpponent, ship);
+    });
   }
 
-  function testPlaceShips() {
-    gameboardPlayer.placeShipsRandomly();
-    // gameboardPlayer.placeShip(
-    //   SHIP_TYPES[0].type,
-    //   SHIP_TYPES[0].length,
-    //   [10, 20, 30, 40, 50],
-    // );
-    // gameboardPlayer.placeShip('Battleship', 4, [11, 12, 13, 14]);
+  function getCurrentShip() {
+    return currentShipToPlace;
+  }
+
+  function incrementCurrentShip() {
+    const index = SHIP_TYPES.indexOf(currentShipToPlace);
+    if (index < SHIP_TYPES.length - 1) {
+      currentShipToPlace = SHIP_TYPES[index + 1];
+    }
+  }
+
+  function handleShipPlacement(placementCells) {
+    if (
+      gameboardPlayer.placeShip(
+        currentShipToPlace.type,
+        currentShipToPlace.length,
+        placementCells,
+      )
+    ) {
+      const placedShip =
+        gameboardPlayer.ships[gameboardPlayer.ships.length - 1];
+      DOMController.renderShip(gameboardPlayer, placedShip);
+      incrementCurrentShip();
+    }
   }
 
   function playOpponentTurn() {
@@ -85,20 +113,13 @@ const mainGameLoop = (() => {
   }
 
   function resetGame() {
+    currentShipToPlace = SHIP_TYPES[0];
     player1.reset();
     opponent.reset();
     gameboardPlayer.reset();
     gameboardOpponent.reset();
 
     prepareGame();
-    testPlaceShips();
-    gameboardPlayer.ships.forEach((ship) => {
-      DOMController.renderShip(gameboardPlayer, ship);
-    });
-
-    gameboardOpponent.ships.forEach((ship) => {
-      DOMController.renderShip(gameboardOpponent, ship);
-    });
   }
 
   return {
@@ -106,8 +127,9 @@ const mainGameLoop = (() => {
     opponent,
     gameboardPlayer,
     gameboardOpponent,
+    getCurrentShip,
     prepareGame,
-    testPlaceShips,
+    handleShipPlacement,
     playOpponentTurn,
     playTurn,
     checkForWin,
@@ -122,7 +144,33 @@ const DOMController = (() => {
   const opponentBoard = opponentField.querySelector('.board');
 
   (function buttonEventListeners() {
+    const startBtn = document.getElementById('start');
     const resetBtn = document.getElementById('reset');
+    const flipBtn = document.getElementById('flip');
+    const confirmBtn = document.getElementById('confirm');
+
+    startBtn.addEventListener('click', () => {
+      const welcomeModalContainer = document.getElementById(
+        'welcome-modal-container',
+      );
+      welcomeModalContainer.classList.add('hidden');
+      mainGameLoop.prepareGame();
+    });
+
+    // Toggle horizontal and vertical alignment
+    flipBtn.addEventListener('click', () => {
+      flipBtn.dataset.horiz = Number(flipBtn.dataset.horiz) ? 0 : 1;
+    });
+
+    confirmBtn.addEventListener('click', () => {
+      if (mainGameLoop.gameboardPlayer.ships.length !== 5) {
+        return;
+      }
+      const placementModalContainer = document.getElementById(
+        'placement-modal-container',
+      );
+      placementModalContainer.classList.add('hidden');
+    });
 
     resetBtn.addEventListener('click', () => {
       const modalContainer = document.getElementById('modal-container');
@@ -141,20 +189,92 @@ const DOMController = (() => {
     if (parent === playerBoard) {
       board.board.forEach((cellNum) => {
         const newCell = document.createElement('div');
+        const newCellChild = document.createElement('div');
         newCell.classList.add('player-cell');
+        newCell.classList.add('flex-centered');
         newCell.dataset.coord = cellNum;
+        newCellChild.classList.add('cell-inner');
+        newCellChild.dataset.coord = cellNum;
         parent.appendChild(newCell);
+        newCell.appendChild(newCellChild);
       });
     } else {
       board.board.forEach((cellNum) => {
         const newCell = document.createElement('div');
+        const newCellChild = document.createElement('div');
         newCell.classList.add('opponent-cell');
+        newCell.classList.add('flex-centered');
         newCell.dataset.coord = cellNum;
+        newCellChild.classList.add('cell-inner');
+        newCellChild.dataset.coord = cellNum;
         parent.appendChild(newCell);
+        newCell.appendChild(newCellChild);
 
         newCell.addEventListener('click', (e) => {
+          if (!e.target.classList.contains('cell-inner')) {
+            return;
+          }
           mainGameLoop.playTurn(e.target);
         });
+      });
+    }
+  }
+
+  // Renders placement grid and adds event listeners for placement hover effect
+  function createPlacementGrid() {
+    const placementModalContainer = document.getElementById(
+      'placement-modal-container',
+    );
+    const placementModal = document.getElementById('placement-modal');
+    const placementBoard = placementModal.querySelector('.board');
+
+    // Cleanup from previous game
+    placementModalContainer.classList.remove('hidden');
+    placementBoard.innerHTML = '';
+
+    for (let i = 1; i <= 100; i++) {
+      const newCell = document.createElement('div');
+      const newCellChild = document.createElement('div');
+      newCell.classList.add('placement-cell');
+      newCell.classList.add('flex-centered');
+      newCellChild.classList.add('placement-cell-highlight');
+      newCell.dataset.coord = i;
+      newCellChild.dataset.coord = i;
+      placementBoard.appendChild(newCell);
+      newCell.appendChild(newCellChild);
+
+      // Add event listeners for hover
+      newCell.addEventListener('mouseenter', () => {
+        if (mainGameLoop.gameboardPlayer.ships.length !== 5) {
+          const isHorizontal = Number(
+            document.getElementById('flip').getAttribute('data-horiz'),
+          );
+          const shipToPlace = mainGameLoop.getCurrentShip();
+          renderShipHover(newCell, shipToPlace.length, isHorizontal);
+        }
+      });
+      newCell.addEventListener('mouseleave', () => {
+        const toUnhighlight = document.querySelectorAll('.hover');
+        toUnhighlight.forEach((cell) => {
+          cell.classList.remove('hover');
+        });
+      });
+
+      // Add event listeners for placement
+      newCell.addEventListener('click', () => {
+        // Only allow placement when current hover is valid
+        if (newCellChild.classList.contains('hover')) {
+          const placementCells = [];
+          document
+            .querySelectorAll('.hover')
+            .forEach((cell) =>
+              placementCells.push(Number(cell.getAttribute('data-coord'))),
+            );
+
+          // If placement successful:
+          // Mark ship on placement board, move to place next ship
+          mainGameLoop.handleShipPlacement(placementCells);
+        }
       });
     }
   }
@@ -163,18 +283,53 @@ const DOMController = (() => {
   function getCellFromCoord(board, coord) {
     const parent =
       board.owner.playerName === 'player' ? playerBoard : opponentBoard;
-    return parent.querySelector(`[data-coord="${coord}"]`);
+    return parent.querySelector(`.cell-inner[data-coord="${coord}"]`);
+  }
+
+  function renderShipHover(origin, length, isHorizontal) {
+    const start = Number(origin.dataset.coord);
+    const proposedCells = [];
+
+    if (isHorizontal) {
+      for (let i = start; i < start + length; i++) {
+        proposedCells.push(i);
+      }
+    } else {
+      proposedCells.push(start);
+      while (proposedCells.length !== length) {
+        proposedCells.push(proposedCells[proposedCells.length - 1] + 10);
+      }
+    }
+    if (
+      !mainGameLoop.gameboardPlayer.isValidShipPlacement(length, proposedCells)
+    ) {
+      return;
+    }
+
+    proposedCells.forEach((cell) => {
+      const toHighlight = document.querySelector(
+        `.placement-cell-highlight[data-coord="${cell}"]`,
+      );
+      toHighlight.classList.add('hover');
+    });
   }
 
   // Takes ref to which board and which ship
+  // For player, render it on placement and playing board
   function renderShip(board, ship) {
     const parent =
       board.owner.playerName === 'player' ? playerBoard : opponentBoard;
 
     ship.occupiedCells.forEach((occupiedCell) => {
-      const domCell = parent.querySelector(`[data-coord="${occupiedCell}"]`);
+      const domCell = parent.querySelector(
+        `.cell-inner[data-coord="${occupiedCell}"]`,
+      );
+      const domPlacementCell = document.querySelector(
+        `.placement-cell-highlight[data-coord="${occupiedCell}"]`,
+      );
       if (parent === playerBoard) {
         domCell.classList.add('ship');
+        domPlacementCell.classList.add('ship');
       } else {
         domCell.classList.add('ship-hidden');
       }
@@ -199,6 +354,7 @@ const DOMController = (() => {
 
   return {
     createBoardGrid,
+    createPlacementGrid,
     getCellFromCoord,
     renderShip,
     renderShot,
@@ -208,12 +364,4 @@ const DOMController = (() => {
 
 /// ////////////
 // GAME LOGIC
-mainGameLoop.prepareGame();
-mainGameLoop.testPlaceShips();
-mainGameLoop.gameboardPlayer.ships.forEach((ship) => {
-  DOMController.renderShip(mainGameLoop.gameboardPlayer, ship);
-});
-
-mainGameLoop.gameboardOpponent.ships.forEach((ship) => {
-  DOMController.renderShip(mainGameLoop.gameboardOpponent, ship);
-});
+// mainGameLoop.prepareGame();
